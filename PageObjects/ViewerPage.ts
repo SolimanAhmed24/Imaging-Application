@@ -6,11 +6,13 @@ export class ViewerPage {
     readonly viewport: Locator;
     readonly patientOverlay: Locator;
 
+
     constructor(page: Page) {
         this.page = page;
         this.seriesItems = page.locator('[data-testid="series-selection-buttons"] button');
         this.viewport = page.locator('[data-testid="medical-image-viewport"]');
         this.patientOverlay = page.locator('[data-testid="patient-info"]');
+
     }
 
     async goTo() {
@@ -21,38 +23,42 @@ export class ViewerPage {
 
 
 
-    async getRenderedImageInfo() {
-        await this.page.waitForSelector('[data-testid="medical-image-viewport"]', { state: 'attached' });
-
-        return await this.page.evaluate(() => {
-            return new Promise((resolve, reject) => {
-                const viewport = document.querySelector('[data-testid="medical-image-viewport"]');
-                if (!viewport) {
-                    reject(new Error('Viewport not found'));
-                    return;
+async getRenderedImageInfo() {
+    await this.page.waitForSelector('[data-testid="medical-image-viewport"]', { state: 'attached' });
+    
+    
+    await this.page.waitForTimeout(100);
+    
+    return await this.page.evaluate(() => {
+        return new Promise((resolve, reject) => {
+            const viewport = document.querySelector('[data-testid="medical-image-viewport"]');
+            if (!viewport) {
+                reject(new Error('Viewport not found'));
+                return;
+            }
+            
+            let resolved = false;
+            
+            const listener = (event) => {
+                if (!resolved) {
+                    resolved = true;
+                    resolve(event.detail);
                 }
-
-                const listener = (event: any) => {
-                    const info = event?.detail ?? null;
-
-                    if (!info) {
-                        reject(new Error('imagerendered event fired but detail is missing'));
-                    } else {
-                        resolve(info);
-                    }
-
+            };
+            
+            viewport.addEventListener('imagerendered', listener, { once: true });
+            
+            setTimeout(() => {
+                if (!resolved) {
+                    resolved = true;
                     viewport.removeEventListener('imagerendered', listener);
-                };
-
-                viewport.addEventListener('imagerendered', listener);
-
-                setTimeout(() => {
-                    viewport.removeEventListener('imagerendered', listener);
-                    reject(new Error('Timeout: imagerendered event did not fire'));
-                }, 10000);
-            });
+                    reject(new Error('Timeout waiting for imagerendered event'));
+                }
+            }, 10000);
         });
-    }
+    });
+}
+
 
 
     async switchSeries(index: number) {
