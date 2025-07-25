@@ -22,43 +22,52 @@ export class ViewerPage {
     }
 
 
+    async getRenderedImageInfo() {
+        await this.page.waitForSelector('[data-testid="medical-image-viewport"]', { state: 'attached' });
 
-async getRenderedImageInfo() {
-    await this.page.waitForSelector('[data-testid="medical-image-viewport"]', { state: 'attached' });
-    
-    
-    await this.page.waitForTimeout(100);
-    
-    return await this.page.evaluate(() => {
-        return new Promise((resolve, reject) => {
-            const viewport = document.querySelector('[data-testid="medical-image-viewport"]');
-            if (!viewport) {
-                reject(new Error('Viewport not found'));
-                return;
-            }
-            
-            let resolved = false;
-            
-            const listener = (event) => {
-                if (!resolved) {
-                    resolved = true;
-                    resolve(event.detail);
+        return await this.page.evaluate(() => {
+            return new Promise((resolve, reject) => {
+                const viewport = document.querySelector('[data-testid="medical-image-viewport"]');
+                if (!viewport) {
+                    reject(new Error('Viewport not found'));
+                    return;
                 }
-            };
-            
-            viewport.addEventListener('imagerendered', listener, { once: true });
-            
-            setTimeout(() => {
-                if (!resolved) {
-                    resolved = true;
-                    viewport.removeEventListener('imagerendered', listener);
-                    reject(new Error('Timeout waiting for imagerendered event'));
+
+                // Check if image is already loaded
+                const img = viewport.querySelector('img') as HTMLImageElement;
+                if (img && img.complete && img.naturalWidth > 0) {
+                    // Image already loaded, return info immediately
+                    resolve({
+                        width: img.naturalWidth,
+                        height: img.naturalHeight,
+                        imageIndex: 0, // First image
+                        src: img.src,
+                        alreadyLoaded: true
+                    });
+                    return;
                 }
-            }, 10000);
+
+                let resolved = false;
+
+                const listener = (event) => {
+                    if (!resolved) {
+                        resolved = true;
+                        resolve(event.detail);
+                    }
+                };
+
+                viewport.addEventListener('imagerendered', listener, { once: true });
+
+                setTimeout(() => {
+                    if (!resolved) {
+                        resolved = true;
+                        viewport.removeEventListener('imagerendered', listener);
+                        reject(new Error('Timeout waiting for imagerendered event'));
+                    }
+                }, 10000);
+            });
         });
-    });
-}
-
+    }
 
 
     async switchSeries(index: number) {
