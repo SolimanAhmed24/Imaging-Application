@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","6642","Navigates to next image using mouse scroll","chromium","Fri Jul 25 23:30:15 CEST 2025","passed","Fri Jul 25 23:30:22 CEST 2025","","navigation.spec.ts","",""
+"","7011","Navigates to next image using mouse scroll","firefox","Fri Jul 25 23:30:15 CEST 2025","passed","Fri Jul 25 23:30:22 CEST 2025","","navigation.spec.ts","",""
+"","5814","Rendering performance metrics via CDP (Chromium only)","chromium","Fri Jul 25 23:49:45 CEST 2025","passed","Fri Jul 25 23:49:51 CEST 2025","","CPD-Performance.spec.ts","",""
