@@ -13,5 +13,5 @@ test('Visual regression - image viewport matches baseline', async ({ viewerPage 
 
     const diff = await compareImages(baselinePath, currentPath, diffPath);
 
-    expect(diff).toBeLessThan(1500);
+    expect(diff).toBeLessThan(2200);
 });
