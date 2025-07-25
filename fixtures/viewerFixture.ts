@@ -1,5 +1,5 @@
 import { test as base } from '@playwright/test';
-import { ViewerPage } from '../PageObjects/viewerPage';
+import { ViewerPage } from '../pageObjects/viewerPage';
 
 type Fixtures = {
     viewerPage: ViewerPage;
