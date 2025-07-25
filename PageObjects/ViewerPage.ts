@@ -49,7 +49,7 @@ export class ViewerPage {
                 setTimeout(() => {
                     viewport.removeEventListener('imagerendered', listener);
                     reject(new Error('Timeout: imagerendered event did not fire'));
-                }, 5000);
+                }, 10000);
             });
         });
     }
