@@ -1,0 +1,22 @@
+{
+  "name": "imaging-application",
+  "version": "1.0.0",
+  "description": "",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx playwright test",
+    "test:report": "npx playwright show-report",
+    "test:headed": "npx playwright test --headed"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.54.1",
+    "@types/node": "^24.1.0",
+    "@types/pngjs": "^6.0.5",
+    "pixelmatch": "^7.1.0",
+    "playwright": "^1.54.1",
+    "pngjs": "^7.0.0"
+  }
+}
